@@ -13,4 +13,8 @@ final class HomeViewModel {
     var goToAvatar : Bool = false
     var gotoRepo : Bool = false
     var search = ""
+    
+    func loadEmojis() async {
+        
+    }
 }

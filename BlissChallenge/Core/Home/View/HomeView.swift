@@ -47,6 +47,9 @@ struct HomeView: View {
             .navigationDestination(isPresented:$homeViewModel.gotoRepo, destination: {
                 AppleRepoView()
             })
+            .task {
+                await homeViewModel.loadEmojis()
+            }
             .padding(.horizontal)
         }
     }
