@@ -7,35 +7,46 @@
 
 import SwiftUI
 
-struct ContentView: View {
-    @State private var search = ""
+struct HomeView: View {
+    @State private var homeViewModel: HomeViewModel = .init()
+    
     var body: some View {
         NavigationStack{
-            VStack{
+            VStack(spacing: 10){
                 Image("preview")
+                    .scaledToFit()
+                
                 CustomButtonView(text: "Random Emoji") {
                     
                 }
                 CustomButtonView(text: "Emojis List") {
-                    
+                    homeViewModel.goToList.toggle()
                 }
                 HStack{
-                    SearchBar(text: $search)
+                    SearchBar(text: $homeViewModel.search)
                     
                     CustomButtonView(text: "Search Emoji") {
                         
                     }
                 }
                 CustomButtonView(text: "Avatar List") {
-                    
+                    homeViewModel.goToAvatar.toggle()
                 }
                 CustomButtonView(text: "Apple Repos") {
-                    
+                    homeViewModel.gotoRepo.toggle()
                 }
-                
                 
             }
             .navigationTitle("Emoji")
+            .navigationDestination(isPresented:$homeViewModel.goToList, destination: {
+                EmojiListView()
+            })
+            .navigationDestination(isPresented:$homeViewModel.goToAvatar, destination: {
+                AvatarListView()
+            })
+            .navigationDestination(isPresented:$homeViewModel.gotoRepo, destination: {
+                AppleRepoView()
+            })
             .padding(.horizontal)
         }
     }
@@ -43,6 +54,6 @@ struct ContentView: View {
 
 #Preview {
     NavigationStack{
-        ContentView()
+        HomeView()
     }
 }
