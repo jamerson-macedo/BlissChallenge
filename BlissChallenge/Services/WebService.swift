@@ -1,0 +1,33 @@
+//
+//  WebService.swift
+//  BlissChallenge
+//
+//  Created by Jamerson Macedo on 14/09/25.
+//
+
+import Foundation
+
+typealias ApiResponse = [String:String]
+
+final class WebService{
+    
+    static let shared = WebService()
+    private init(){}
+    
+    func fetchEmojis() async throws ->[Emoji]{
+        guard let url = APIEndpoint.emojis.url else { throw NetworkError.badURL}
+        
+        do{
+            let (data, _) = try await URLSession.shared.data(from: url)
+            guard let apiResponse = try? JSONDecoder().decode(ApiResponse.self, from: data) else {
+                throw NetworkError.decodingError
+            }
+            return Emoji.from(api: apiResponse)
+            
+        }catch let error as NetworkError {
+            throw error
+        } catch {
+            throw NetworkError.unknown(error)
+        }
+    }
+}

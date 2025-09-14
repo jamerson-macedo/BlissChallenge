@@ -8,8 +8,25 @@
 import SwiftUI
 
 struct EmojiListView: View {
+    
+    let gridItems = [
+        GridItem(.flexible()),
+        GridItem(.flexible()),
+        GridItem(.flexible()),
+        GridItem(.flexible())
+    ]
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack{
+            ScrollView{
+                LazyVGrid(columns: gridItems, spacing: 10) {
+                    ForEach(0..<100) { index in
+                        Image("preview")
+                            
+                    }
+                    
+                }
+            }
+        }
     }
 }
 
