@@ -39,7 +39,7 @@ struct HomeView: View {
             }
             .navigationTitle("Emoji")
             .navigationDestination(isPresented:$homeViewModel.goToList, destination: {
-                EmojiListView()
+                EmojiListView(viewModel: homeViewModel)
             })
             .navigationDestination(isPresented:$homeViewModel.goToAvatar, destination: {
                 AvatarListView()

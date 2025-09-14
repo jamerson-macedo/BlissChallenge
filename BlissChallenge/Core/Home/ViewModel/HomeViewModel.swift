@@ -7,18 +7,23 @@
 
 import Foundation
 import Observation
+
 @Observable
-final class HomeViewModel {
+@MainActor final class HomeViewModel {
     
     var goToList : Bool = false
     var goToAvatar : Bool = false
     var gotoRepo : Bool = false
+    
     var search = ""
+    
+    var emoji : Emoji?
+    var emojiList : [Emoji] = []
     
     func loadEmojis() async {
         do{
             let emojis = try await WebService.shared.fetchEmojis()
-            print(emojis)
+            self.emojiList = emojis
         }catch{
             print("Error")
         }

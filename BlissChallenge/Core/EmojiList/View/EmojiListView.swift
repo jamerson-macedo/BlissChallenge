@@ -8,6 +8,11 @@
 import SwiftUI
 
 struct EmojiListView: View {
+    @State var viewModel : HomeViewModel
+    
+    init(viewModel: HomeViewModel) {
+        self.viewModel = viewModel
+    }
     
     let gridItems = [
         GridItem(.flexible()),
@@ -19,9 +24,34 @@ struct EmojiListView: View {
         VStack{
             ScrollView{
                 LazyVGrid(columns: gridItems, spacing: 10) {
-                    ForEach(0..<100) { index in
-                        Image("preview")
+                    ForEach(viewModel.emojiList) { emoji in
+                        
+                        if let url = URL(string: emoji.url) {
                             
+                            AsyncImage(url: url) { result in
+                                
+                                switch result {
+                                    
+                                case.success(let image):
+                                    image
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 50, height: 50)
+                                    
+                                case .failure(_):
+                                    Image(systemName: "xmark")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .foregroundColor(.red)
+                                        .frame(width: 50, height: 50)
+                                    
+                                default:
+                                    ProgressView()
+                                        .frame(width: 50, height: 50)
+                                }
+                                
+                            }
+                        }
                     }
                     
                 }
@@ -31,5 +61,5 @@ struct EmojiListView: View {
 }
 
 #Preview {
-    EmojiListView()
+    EmojiListView(viewModel: HomeViewModel())
 }
