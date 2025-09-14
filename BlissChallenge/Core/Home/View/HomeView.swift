@@ -13,11 +13,46 @@ struct HomeView: View {
     var body: some View {
         NavigationStack{
             VStack(spacing: 10){
-                Image("preview")
-                    .scaledToFit()
+                VStack {
+                    if let emoji = homeViewModel.emoji {
+                        AsyncImage(url: URL(string: emoji.url)) { result in
+                            switch result {
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 100, height: 100)
+                                    .transition(.scale.combined(with: .opacity))
+                                    .animation(.spring(response: 0.5, dampingFraction: 0.7), value: emoji.id)
+                                
+                            case .failure(_):
+                                Image(systemName: "xmark")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .foregroundColor(.red)
+                                    .frame(width: 100, height: 100)
+                                    .transition(.opacity)
+                                
+                            default:
+                                ProgressView()
+                                    .frame(width: 100, height: 100)
+                            }
+                        }
+                        
+                        Text(emoji.id)
+                            .font(.headline)
+                            .transition(.opacity.combined(with: .slide))
+                            .animation(.easeInOut, value: emoji.id)
+                    }
+                }
+                .frame(height: 100)
+                .padding(.bottom,30)
                 
                 CustomButtonView(text: "Random Emoji") {
-                    
+                    withAnimation {
+                        homeViewModel.generateRandomEmoji()
+                    }
+                   
                 }
                 CustomButtonView(text: "Emojis List") {
                     homeViewModel.goToList.toggle()

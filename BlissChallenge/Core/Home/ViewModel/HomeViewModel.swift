@@ -29,4 +29,9 @@ import Observation
         }
      
     }
+    func generateRandomEmoji() {
+        if let randomEmoji = emojiList.randomElement() {
+            self.emoji = randomEmoji
+        }
+    }
 }

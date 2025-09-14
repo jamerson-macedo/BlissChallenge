@@ -6,7 +6,7 @@
 //
 
 import Foundation
-struct Emoji: Identifiable {
+struct Emoji: Identifiable,Equatable {
     var id:String
     let url : String
 }
