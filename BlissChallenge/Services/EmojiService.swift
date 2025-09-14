@@ -9,14 +9,13 @@ import Foundation
 
 typealias ApiResponse = [String:String]
 
-final class WebService{
+final class EmojiService{
     
-    static let shared = WebService()
+    static let shared = EmojiService()
     private init(){}
     
     func fetchEmojis() async throws ->[Emoji]{
         guard let url = APIEndpoint.emojis.url else { throw NetworkError.badURL}
-        
         do{
             let (data, _) = try await URLSession.shared.data(from: url)
             guard let apiResponse = try? JSONDecoder().decode(ApiResponse.self, from: data) else {

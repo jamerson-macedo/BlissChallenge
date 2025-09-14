@@ -9,6 +9,7 @@ import Foundation
 struct Emoji: Identifiable,Equatable {
     var id:String
     let url : String
+    
 }
 extension Emoji {
     static func from(api: ApiResponse) -> [Emoji] {

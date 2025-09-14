@@ -37,6 +37,11 @@ struct EmojiListView: View {
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: 50, height: 50)
+                                        .onTapGesture {
+                                            viewModel.emojiList.removeAll{
+                                                $0.id == emoji.id
+                                            }
+                                        }
                                     
                                 case .failure(_):
                                     Image(systemName: "xmark")

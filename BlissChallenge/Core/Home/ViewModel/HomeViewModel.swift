@@ -22,7 +22,7 @@ import Observation
     
     func loadEmojis() async {
         do{
-            let emojis = try await WebService.shared.fetchEmojis()
+            let emojis = try await EmojiService.shared.fetchEmojis()
             self.emojiList = emojis
         }catch{
             print("Error")
