@@ -26,7 +26,7 @@ final class EmojiService{
         }catch let error as NetworkError {
             throw error
         } catch {
-            throw NetworkError.unknown(error)
+            throw NetworkError.custom("Unknown error")
         }
     }
 }

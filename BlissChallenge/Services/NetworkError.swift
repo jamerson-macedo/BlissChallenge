@@ -9,15 +9,15 @@ import Foundation
 enum NetworkError: Error, LocalizedError {
     case badURL
     case decodingError
-    case unknown(Error)
+    case custom(String)
     var errorDescription: String? {
         switch self {
         case .badURL:
             return "The provided URL is invalid."
         case .decodingError:
             return "Failed to decode response data."
-        case .unknown(let error):
-            return "Unknown error: \(error.localizedDescription)"
+        case .custom(let message): return message
         }
+        
     }
 }

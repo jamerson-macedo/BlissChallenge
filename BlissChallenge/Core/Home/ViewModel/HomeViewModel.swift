@@ -15,7 +15,7 @@ import Observation
     var goToAvatar : Bool = false
     var gotoRepo : Bool = false
     var errorMessage : String?
-    var search = ""
+  
     
     var emoji : Emoji?
     var emojiList : [Emoji] = []

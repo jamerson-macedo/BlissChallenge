@@ -12,11 +12,14 @@ enum APIEndpoint {
     static let baseURL = "https://api.github.com"
     
     case emojis
+    case avatar(String)
     
     var url: URL? {
         switch self {
         case .emojis:
             return URL(string: "\(Self.baseURL)/emojis")
+        case .avatar(let login):
+            return URL(string: "\(Self.baseURL)/users/\(login)")
         }
     }
 }

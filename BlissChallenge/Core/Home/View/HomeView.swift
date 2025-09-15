@@ -8,90 +8,111 @@
 import SwiftUI
 
 struct HomeView: View {
-    @State private var homeViewModel: HomeViewModel = .init()
+    @State var homeViewModel: HomeViewModel = .init()
+    @State var avatarViewModel: AvatarViewModel = .init()
+    
+    @State private var showAvatar = false
+    @State private var showEmoji = true
     
     var body: some View {
-        NavigationStack{
-            VStack(spacing: 10){
+        NavigationStack {
+            VStack(spacing: 10) {
                 VStack {
-                    if let emoji = homeViewModel.emoji {
-                        AsyncImage(url: URL(string: emoji.url)) { result in
-                            switch result {
-                            case .success(let image):
-                                image
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 100, height: 100)
-                                    .transition(.scale.combined(with: .opacity))
-                                    .animation(.spring(response: 0.5, dampingFraction: 0.7), value: emoji.id)
-                                
-                            case .failure(_):
-                                Image(systemName: "xmark")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .foregroundColor(.red)
-                                    .frame(width: 100, height: 100)
-                                    .transition(.opacity)
-                                
-                            default:
-                                ProgressView()
-                                    .frame(width: 100, height: 100)
-                            }
+                    if showAvatar, let avatar = avatarViewModel.avatar {
+                        AvatarView(avatar: avatar)
+                    }
+                    if let errorMessage = avatarViewModel.errormessage {
+                        ErrorMessageView(message: errorMessage)
+                    }
+                }
+                .onChange(of: avatarViewModel.errormessage) { _,_ in
+                    if avatarViewModel.errormessage != nil {
+                        showAvatar = false
+                    }
+                }
+                
+                if showEmoji, let emoji = homeViewModel.emoji {
+                    EmojiView(emoji: emoji)
+                }
+            }
+            .frame(height: 100)
+            .padding(.bottom, 30)
+
+            CustomButtonView(text: "Random Emoji") {
+                showRandomEmoji()
+            }
+            CustomButtonView(text: "Emojis List") {
+                homeViewModel.goToList.toggle()
+            }
+            HStack {
+                SearchBar(text: $avatarViewModel.search)
+                    .submitLabel(.search)
+                    .onSubmit {
+                        Task {
+                            await avatarViewModel.fetchAvatar()
+                            updateAvatarView()
                         }
-                        
-                        Text(emoji.id)
-                            .font(.headline)
-                            .transition(.opacity.combined(with: .slide))
-                            .animation(.easeInOut, value: emoji.id)
                     }
-                }
-                .frame(height: 100)
-                .padding(.bottom,30)
                 
-                CustomButtonView(text: "Random Emoji") {
-                    withAnimation {
-                        homeViewModel.generateRandomEmoji()
-                    }
-                   
-                }
-                CustomButtonView(text: "Emojis List") {
-                    homeViewModel.goToList.toggle()
-                }
-                HStack{
-                    SearchBar(text: $homeViewModel.search)
-                    
-                    CustomButtonView(text: "Search Emoji") {
-                        
+                CustomButtonView(text: "Search Emoji") {
+                    Task {
+                        await avatarViewModel.fetchAvatar()
+                        updateAvatarView()
                     }
                 }
-                CustomButtonView(text: "Avatar List") {
-                    homeViewModel.goToAvatar.toggle()
-                }
-                CustomButtonView(text: "Apple Repos") {
-                    homeViewModel.gotoRepo.toggle()
-                }
-                
             }
-            .navigationTitle("Emoji")
-            .navigationDestination(isPresented:$homeViewModel.goToList, destination: {
-                EmojiListView(viewModel: homeViewModel)
-            })
-            .navigationDestination(isPresented:$homeViewModel.goToAvatar, destination: {
-                AvatarListView()
-            })
-            .navigationDestination(isPresented:$homeViewModel.gotoRepo, destination: {
-                AppleRepoView()
-            })
-            .task {
-                await homeViewModel.loadEmojis()
+            CustomButtonView(text: "Avatar List") {
+                homeViewModel.goToAvatar.toggle()
             }
-            .padding(.horizontal)
+            CustomButtonView(text: "Apple Repos") {
+                homeViewModel.gotoRepo.toggle()
+            }
+        }
+        .navigationTitle("Emoji")
+        .navigationDestination(isPresented: $homeViewModel.goToList, destination: {
+            EmojiListView(viewModel: homeViewModel)
+        })
+        .navigationDestination(isPresented: $homeViewModel.goToAvatar, destination: {
+            AvatarListView()
+        })
+        .navigationDestination(isPresented: $homeViewModel.gotoRepo, destination: {
+            AppleRepoView()
+        })
+        .task {
+            await homeViewModel.loadEmojis()
+        }
+        .padding(.horizontal)
+    }
+    
+    private func updateAvatarView() {
+        if avatarViewModel.avatar != nil {
+            showAvatar = true
+            showEmoji = false
+        } else {
+            showAvatar = false
+            showEmoji = true
+        }
+    }
+
+    private func showRandomEmoji() {
+        withAnimation {
+            homeViewModel.generateRandomEmoji()
+            showAvatar = false
+            avatarViewModel.errormessage = nil
+            showEmoji = true
         }
     }
 }
 
+
+
+
+
+
+
 #Preview {
-    NavigationStack{
+    NavigationStack {
         HomeView()
     }
 }
+
