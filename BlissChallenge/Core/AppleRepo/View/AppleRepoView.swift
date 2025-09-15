@@ -11,7 +11,6 @@ struct AppleRepoView: View {
     @State var viewmodel: AppleRepoViewModel = .init()
     
     var body: some View {
-        NavigationStack {
             List {
                 ForEach(viewmodel.repo) { repo in
                     VStack(alignment: .leading) {
@@ -51,7 +50,6 @@ struct AppleRepoView: View {
                 await viewmodel.fetchAppleRepo()
             }
             
-        }
     }
 }
 
