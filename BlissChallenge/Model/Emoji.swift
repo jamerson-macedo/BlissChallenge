@@ -9,7 +9,8 @@ import Foundation
 import SwiftData
 
 @Model
-class Emoji: Identifiable, Equatable {
+
+class Emoji: Identifiable, Equatable,@unchecked Sendable {
     var id: String
     var url: String
     @Attribute(.externalStorage)

@@ -62,6 +62,7 @@ import Observation
             self.emoji = randomEmoji
         }
     }
+    
     func removeEmoji(_ emoji: Emoji) {
         emojiList.removeAll { $0.id == emoji.id }
     }

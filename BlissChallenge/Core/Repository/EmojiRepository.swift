@@ -17,7 +17,6 @@ final class EmojiRepository {
         self.apiRepository = apiRepository
         self.cacheRepository = cacheRepository
     }
-
     func fetchEmojis() async throws -> [Emoji] {
         let cached = try cacheRepository.fetchEmojis()
         if !cached.isEmpty {
@@ -26,7 +25,7 @@ final class EmojiRepository {
         }
 
         let remote = try await apiRepository.fetchEmojis()
-        try cacheRepository.saveEmojis(remote)
+        try await cacheRepository.saveEmojis(remote)
         return remote
     }
 
@@ -47,7 +46,7 @@ final class EmojiRepository {
     func refreshEmojis() async throws {
         try cacheRepository.clearCache()
         let remote = try await apiRepository.fetchEmojis()
-        try cacheRepository.saveEmojis(remote)
+        try await cacheRepository.saveEmojis(remote)
     }
 
 }

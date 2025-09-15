@@ -44,9 +44,12 @@ struct HomeView: View {
                 .frame(height: 100)
                 .padding(.bottom, 30)
                 
-                CustomButtonView(text: "Random Emoji") {
+                CustomButtonView(isLoading: homeViewModel.isLoading,text: "Random Emoji") {
                     showRandomEmoji()
                 }
+                .opacity(homeViewModel.isLoading ? 0.5 : 1)
+                .disabled(homeViewModel.isLoading ? true : false)
+                
                 CustomButtonView(text: "Emojis List") {
                     homeViewModel.goToList.toggle()
                 }

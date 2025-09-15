@@ -14,13 +14,13 @@ final class EmojiCacheRepository {
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
     }
-
+    
     func fetchEmojis() throws -> [Emoji] {
         print("Fetch from cache")
         let descriptor = FetchDescriptor<Emoji>()
         return try modelContext.fetch(descriptor)
     }
-
+    @MainActor
     func saveEmojis(_ emojis: [Emoji]) throws {
         for emoji in emojis {
             if try !exists(emoji) {
