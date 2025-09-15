@@ -14,7 +14,7 @@ import Observation
     var goToList : Bool = false
     var goToAvatar : Bool = false
     var gotoRepo : Bool = false
-    
+    var errorMessage : String?
     var search = ""
     
     var emoji : Emoji?
@@ -25,7 +25,7 @@ import Observation
             let emojis = try await EmojiService.shared.fetchEmojis()
             self.emojiList = emojis
         }catch{
-            print("Error")
+            self.errorMessage = "Not possible load emojis"
         }
      
     }
