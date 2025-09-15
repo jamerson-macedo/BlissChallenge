@@ -22,19 +22,11 @@ struct HomeView: View {
                         if showAvatar, let avatar = avatarViewModel.avatar {
                             AvatarView(avatar: avatar)
                         }
-                        if let errorMessage = avatarViewModel.errormessage {
-                            ErrorMessageView(message: errorMessage)
-                        }
-                    }
-                    .onChange(of: avatarViewModel.errormessage) { _,_ in
-                        if avatarViewModel.errormessage != nil {
-                            showAvatar = false
+                        if showEmoji, let emoji = homeViewModel.emoji {
+                            EmojiView(emoji: emoji)
                         }
                     }
                     
-                    if showEmoji, let emoji = homeViewModel.emoji {
-                        EmojiView(emoji: emoji)
-                    }
                 }
                 .frame(height: 100)
                 .padding(.bottom, 30)
@@ -47,13 +39,6 @@ struct HomeView: View {
                 }
                 HStack {
                     SearchBar(text: $avatarViewModel.search)
-                        .submitLabel(.search)
-                        .onSubmit {
-                            Task {
-                                await avatarViewModel.fetchAvatar()
-                                updateAvatarView()
-                            }
-                        }
                     
                     CustomButtonView(text: "Search Avatar") {
                         Task {
@@ -80,6 +65,23 @@ struct HomeView: View {
                 .navigationDestination(isPresented: $homeViewModel.gotoRepo, destination: {
                     AppleRepoView()
                 })
+                .alert(
+                    "Error",
+                    isPresented: Binding(
+                        get: { avatarViewModel.errormessage != nil },
+                        set: { _ in avatarViewModel.errormessage = nil }
+                    )
+                ) {
+                    Button("OK", role: .cancel) {
+                        showAvatar = false
+                        showEmoji = false
+                        avatarViewModel.avatar = nil
+                        homeViewModel.emoji = nil
+                        avatarViewModel.errormessage = nil
+                    }
+                } message: {
+                    Text(avatarViewModel.errormessage ?? "Unknown error")
+                }
         }
         .task {
             await homeViewModel.loadEmojis()
@@ -96,7 +98,7 @@ struct HomeView: View {
             showEmoji = true
         }
     }
-
+    
     private func showRandomEmoji() {
         withAnimation {
             homeViewModel.generateRandomEmoji()
