@@ -13,13 +13,18 @@ enum APIEndpoint {
     
     case emojis
     case avatar(String)
+    case repos(username: String, page: Int, perPage: Int)
     
     var url: URL? {
         switch self {
         case .emojis:
             return URL(string: "\(Self.baseURL)/emojis")
+            
         case .avatar(let login):
             return URL(string: "\(Self.baseURL)/users/\(login)")
+            
+        case .repos(let username, let page, let perPage):
+            return URL(string: "\(Self.baseURL)/users/\(username)/repos?page=\(page)&per_page=\(perPage)")
         }
     }
 }
