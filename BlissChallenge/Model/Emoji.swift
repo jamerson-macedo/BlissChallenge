@@ -1,20 +1,28 @@
 //
-//  Emoji.swift
+//  Emoji 2.swift
 //  BlissChallenge
 //
-//  Created by Jamerson Macedo on 14/09/25.
+//  Created by Jamerson Macedo on 15/09/25.
 //
 
 import Foundation
-struct Emoji: Identifiable,Equatable {
-    var id:String
-    let url : String
+import SwiftData
+
+@Model
+class Emoji: Identifiable, Equatable {
+    var id: String
+    var url: String
+    @Attribute(.externalStorage)
+    var imageData: Data?
+    init(id: String, url: String, imageData: Data? = nil) {
+        self.id = id
+        self.url = url
+        self.imageData = imageData
+    }
     
-}
-extension Emoji {
     static func from(api: ApiResponse) -> [Emoji] {
         api.map { key, value in
-            Emoji(id: key, url: value)
+            Emoji(id: key, url: value, imageData: nil)
         }
     }
 }

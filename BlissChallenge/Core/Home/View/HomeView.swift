@@ -6,13 +6,26 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct HomeView: View {
-    @State var homeViewModel: HomeViewModel = .init()
+    @State var homeViewModel: HomeViewModel
     @State var avatarViewModel: AvatarViewModel = .init()
     
     @State private var showAvatar = false
     @State private var showEmoji = true
+    
+    let modelContext: ModelContext
+    let repository: EmojiRepository
+    
+    init(container: ModelContainer) {
+        self.modelContext = container.mainContext
+        let cacheRepo = EmojiCacheRepository(modelContext: modelContext)
+        let apiRepo = EmojiAPIRepository()
+        self.repository = EmojiRepository(apiRepository: apiRepo, cacheRepository: cacheRepo)
+        _homeViewModel = State(initialValue: HomeViewModel(repository: repository))
+    }
+    
     
     var body: some View {
         NavigationStack {
@@ -57,7 +70,7 @@ struct HomeView: View {
                 }
             } .navigationTitle("Emoji")
                 .navigationDestination(isPresented: $homeViewModel.goToList, destination: {
-                    EmojiListView(viewModel: homeViewModel)
+                    EmojiListView(viewModel: homeViewModel, repository: repository)
                 })
                 .navigationDestination(isPresented: $homeViewModel.goToAvatar, destination: {
                     AvatarListView()
@@ -106,18 +119,6 @@ struct HomeView: View {
             avatarViewModel.errormessage = nil
             showEmoji = true
         }
-    }
-}
-
-
-
-
-
-
-
-#Preview {
-    NavigationStack {
-        HomeView()
     }
 }
 
