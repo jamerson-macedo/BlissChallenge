@@ -49,6 +49,15 @@ final class EmojiCacheRepository {
         storedEmoji.imageData = imageData
         try modelContext.save()
     }
+    func clearCache() throws {
+         let descriptor = FetchDescriptor<Emoji>()
+         let emojis = try modelContext.fetch(descriptor)
+         emojis.forEach { emoji in
+             modelContext.delete(emoji)
+         }
+         try modelContext.save()
+         print("Cache cleared")
+     }
 }
 
 
