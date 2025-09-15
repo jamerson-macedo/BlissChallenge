@@ -16,68 +16,71 @@ struct HomeView: View {
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: 10) {
-                VStack {
-                    if showAvatar, let avatar = avatarViewModel.avatar {
-                        AvatarView(avatar: avatar)
+            VStack{
+                VStack(spacing: 10) {
+                    VStack {
+                        if showAvatar, let avatar = avatarViewModel.avatar {
+                            AvatarView(avatar: avatar)
+                        }
+                        if let errorMessage = avatarViewModel.errormessage {
+                            ErrorMessageView(message: errorMessage)
+                        }
                     }
-                    if let errorMessage = avatarViewModel.errormessage {
-                        ErrorMessageView(message: errorMessage)
+                    .onChange(of: avatarViewModel.errormessage) { _,_ in
+                        if avatarViewModel.errormessage != nil {
+                            showAvatar = false
+                        }
+                    }
+                    
+                    if showEmoji, let emoji = homeViewModel.emoji {
+                        EmojiView(emoji: emoji)
                     }
                 }
-                .onChange(of: avatarViewModel.errormessage) { _,_ in
-                    if avatarViewModel.errormessage != nil {
-                        showAvatar = false
-                    }
-                }
+                .frame(height: 100)
+                .padding(.bottom, 30)
                 
-                if showEmoji, let emoji = homeViewModel.emoji {
-                    EmojiView(emoji: emoji)
+                CustomButtonView(text: "Random Emoji") {
+                    showRandomEmoji()
                 }
-            }
-            .frame(height: 100)
-            .padding(.bottom, 30)
-
-            CustomButtonView(text: "Random Emoji") {
-                showRandomEmoji()
-            }
-            CustomButtonView(text: "Emojis List") {
-                homeViewModel.goToList.toggle()
-            }
-            HStack {
-                SearchBar(text: $avatarViewModel.search)
-                    .submitLabel(.search)
-                    .onSubmit {
+                CustomButtonView(text: "Emojis List") {
+                    homeViewModel.goToList.toggle()
+                }
+                HStack {
+                    SearchBar(text: $avatarViewModel.search)
+                        .submitLabel(.search)
+                        .onSubmit {
+                            Task {
+                                await avatarViewModel.fetchAvatar()
+                                updateAvatarView()
+                            }
+                        }
+                    
+                    CustomButtonView(text: "Search Avatar") {
                         Task {
                             await avatarViewModel.fetchAvatar()
                             updateAvatarView()
                         }
                     }
-                
-                CustomButtonView(text: "Search Emoji") {
-                    Task {
-                        await avatarViewModel.fetchAvatar()
-                        updateAvatarView()
-                    }
+                    .disabled(avatarViewModel.search.isEmpty ? true : false)
+                    .opacity(avatarViewModel.search.isEmpty ? 0.5 : 1)
                 }
-            }
-            CustomButtonView(text: "Avatar List") {
-                homeViewModel.goToAvatar.toggle()
-            }
-            CustomButtonView(text: "Apple Repos") {
-                homeViewModel.gotoRepo.toggle()
-            }
+                CustomButtonView(text: "Avatar List") {
+                    homeViewModel.goToAvatar.toggle()
+                }
+                CustomButtonView(text: "Apple Repos") {
+                    homeViewModel.gotoRepo.toggle()
+                }
+            } .navigationTitle("Emoji")
+                .navigationDestination(isPresented: $homeViewModel.goToList, destination: {
+                    EmojiListView(viewModel: homeViewModel)
+                })
+                .navigationDestination(isPresented: $homeViewModel.goToAvatar, destination: {
+                    AvatarListView()
+                })
+                .navigationDestination(isPresented: $homeViewModel.gotoRepo, destination: {
+                    AppleRepoView()
+                })
         }
-        .navigationTitle("Emoji")
-        .navigationDestination(isPresented: $homeViewModel.goToList, destination: {
-            EmojiListView(viewModel: homeViewModel)
-        })
-        .navigationDestination(isPresented: $homeViewModel.goToAvatar, destination: {
-            AvatarListView()
-        })
-        .navigationDestination(isPresented: $homeViewModel.gotoRepo, destination: {
-            AppleRepoView()
-        })
         .task {
             await homeViewModel.loadEmojis()
         }

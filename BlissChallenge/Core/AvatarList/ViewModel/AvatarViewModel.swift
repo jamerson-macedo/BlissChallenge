@@ -21,21 +21,12 @@ import Observation
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .lowercased()
         
-        guard !query.isEmpty else {
-            self.errormessage = "Search term is required"
-            return
-        }
-        
-        isLoading = true
-        errormessage = nil
-        
         do {
             avatar = try await AvatarService.shared.fetchAvatar(query: query)
         } catch {
-            self.errormessage = "Failed to load avatar. Please try again."
+            self.errormessage = "Failed to load avatar. Avatar not Found."
         }
         
-        isLoading = false
         search = "" 
     }
 }
