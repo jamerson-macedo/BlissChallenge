@@ -29,4 +29,11 @@ final class EmojiService{
             throw NetworkError.custom("Unknown error")
         }
     }
+    func fetchImage(for url: String) async throws -> Data? {
+        guard let url = APIEndpoint.emojis.url else { throw NetworkError.badURL}
+           
+           let (data, _) = try await URLSession.shared.data(from: url)
+           return data
+       }
+    
 }
