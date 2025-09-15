@@ -8,10 +8,11 @@
 import SwiftUI
 
 struct EmojiListView: View {
-    @State var viewModel : HomeViewModel
+    @Bindable var viewModel : HomeViewModel
     
     init(viewModel: HomeViewModel) {
-        self.viewModel = viewModel
+        self._viewModel = Bindable(viewModel)
+     
     }
     
     let gridItems = [
@@ -60,6 +61,8 @@ struct EmojiListView: View {
                     }
                     
                 }
+            }.refreshable {
+                await viewModel.loadEmojis()
             }
         }
     }
