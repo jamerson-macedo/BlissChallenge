@@ -8,54 +8,61 @@
 import SwiftUI
 
 struct AvatarListView: View {
-    @Bindable var avatarViewModel : AvatarViewModel
+    @Bindable var avatarViewModel: AvatarViewModel
+
     init(avatarViewModel: AvatarViewModel) {
         self._avatarViewModel = Bindable(avatarViewModel)
     }
+
     var body: some View {
         VStack {
             if avatarViewModel.avatars.isEmpty {
                 ContentUnavailableView("No avatars found", systemImage: "person.circle")
-            }else {
-                List(avatarViewModel.avatars) { avatar in
-                    HStack {
-                        if let imageData = avatar.imageData, let uiImage = UIImage(data: imageData) {
-                            Image(uiImage: uiImage)
-                                .resizable()
-                                .scaledToFit()
-                                .clipShape(Circle())
-                                .frame(width: 80, height: 80)
-                        }
-                        
-                        VStack(alignment: .leading) {
-                            Text(avatar.login)
-                                .font(.headline)
-                        }
-                        
-                        Spacer()
-                        
-                        
-                        Button(action: {
-                            Task{
-                                await avatarViewModel.deleteAvatar(avatar:avatar)
-                                avatarViewModel.avatars.removeAll { $0.id == avatar.id }
+            } else {
+                List {
+                    ForEach(avatarViewModel.avatars) { avatar in
+                        HStack {
+                            if let imageData = avatar.imageData,
+                               let uiImage = UIImage(data: imageData) {
+                                Image(uiImage: uiImage)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .clipShape(Circle())
+                                    .frame(width: 80, height: 80)
                             }
-                        }) {
-                            if avatarViewModel.isLoading {
-                                ProgressView()
-                            }else{
-                                Image(systemName: "trash")
-                                    .foregroundColor(.red)
+                            
+                            VStack(alignment: .leading) {
+                                Text(avatar.login)
+                                    .font(.headline)
+                            }
+                            
+                            Spacer()
+                            
+                            Button {
+                                Task {
+                                    await avatarViewModel.deleteAvatar(avatar: avatar)
+                                    withAnimation(.easeInOut) {
+                                        avatarViewModel.avatars.removeAll { $0.id == avatar.id }
+                                    }
+                                }
+                            } label: {
+                                if avatarViewModel.isLoading {
+                                    ProgressView()
+                                } else {
+                                    Image(systemName: "trash")
+                                        .foregroundColor(.red)
+                                }
                             }
                         }
                     }
+                    .animation(.easeInOut, value: avatarViewModel.avatars)
                 }
                 .navigationTitle("Avatars")
                 .navigationBarTitleDisplayMode(.inline)
             }
-        }.task {
+        }
+        .task {
             await avatarViewModel.loadAvatars()
-            
         }
     }
 }

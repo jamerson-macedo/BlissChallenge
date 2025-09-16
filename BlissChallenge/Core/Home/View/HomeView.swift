@@ -49,7 +49,7 @@ struct HomeView: View {
                     }
                     
                 }
-                .frame(height: 100)
+                .frame(height: 150)
                 .padding(.bottom, 30)
                 
                 CustomButtonView(isLoading: homeViewModel.isLoading,text: "Random Emoji") {
