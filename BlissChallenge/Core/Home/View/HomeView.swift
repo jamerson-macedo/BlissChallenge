@@ -23,7 +23,7 @@ struct HomeView: View {
         let cacheRepo = EmojiLocalDataSource(modelContext: modelContext)
         let apiRepo = EmojiRemoteDataSource()
         let avatarRepo = AvatarRepository(context: modelContext)
-        self.repository = EmojiRepository(apiRepository: apiRepo, cacheRepository: cacheRepo)
+        self.repository = EmojiRepository(remote: apiRepo, local: cacheRepo)
         _homeViewModel = State(initialValue: HomeViewModel(repository: repository))
         _avatarViewModel = State(initialValue: AvatarViewModel(repository: avatarRepo))
     }

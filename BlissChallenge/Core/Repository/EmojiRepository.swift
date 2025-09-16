@@ -13,9 +13,9 @@ final class EmojiRepository {
     private let remote: EmojiRemoteDataSource
     private let local: EmojiLocalDataSource
     
-    init(apiRepository: EmojiRemoteDataSource, cacheRepository: EmojiLocalDataSource) {
-        self.remote = apiRepository
-        self.local = cacheRepository
+    init(remote: EmojiRemoteDataSource, local: EmojiLocalDataSource) {
+        self.remote = remote
+        self.local = local
     }
     func fetchEmojis() async throws -> [Emoji] {
         let cached = try local.fetchEmojis()
