@@ -7,7 +7,7 @@
 
 import SwiftData
 import Foundation
-@MainActor
+
 final class EmojiLocalDataSource {
     private let modelContext: ModelContext
 
