@@ -59,6 +59,7 @@ struct AvatarListView: View {
                 }
                 .navigationTitle("Avatars")
                 .navigationBarTitleDisplayMode(.inline)
+                .listStyle(.plain) 
                 .alert(
                     "Error",
                     isPresented: Binding(
@@ -80,16 +81,19 @@ struct AvatarListView: View {
     }
 }
 
-
-#Preview("Português") {
-    // Cria o preview container
-    let preview = Preview(Emoji.self)
-    preview.addExamples(Emoji.sampleEmojis)
+#Preview("Avatar ListView") {
+    // 1. Cria o container de preview
+    let preview = Preview(Avatar.self)
+    
+    // 2. Adiciona exemplos de avatar no container
+    preview.addExamples(Avatar.sampleAvatars)
+    
+    // 3. Cria o repositório de preview
     let avatarRepo = AvatarRepository(context: preview.container.mainContext)
     
+    // 4. Cria o ViewModel populado com dados fake
     let avatarVM = AvatarViewModel(repository: avatarRepo)
-    
-    
-    return AvatarListView(avatarViewModel: avatarVM)
+    avatarVM.avatars = Avatar.sampleAvatars
+return AvatarListView(avatarViewModel: avatarVM)
         .modelContainer(preview.container)
 }

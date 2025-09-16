@@ -32,6 +32,7 @@ struct AppleRepoView: View {
                     }
                 }
             }
+            .listStyle(.plain) 
             .alert(
                 "Error",
                 isPresented: Binding(
