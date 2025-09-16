@@ -46,6 +46,7 @@ struct AppleRepoView: View {
                 Text(viewmodel.errormessage ?? "Unknown error")
             }
             .navigationTitle("Apple Repo")
+            .navigationBarTitleDisplayMode(.inline)
             .task {
                 await viewmodel.fetchAppleRepo()
             }

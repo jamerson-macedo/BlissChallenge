@@ -10,7 +10,7 @@ import SwiftData
 
 struct HomeView: View {
     @State var homeViewModel: HomeViewModel
-    @State var avatarViewModel: AvatarViewModel = .init()
+    @State var avatarViewModel: AvatarViewModel
     
     @State private var showAvatar = false
     @State private var showEmoji = true
@@ -22,8 +22,10 @@ struct HomeView: View {
         self.modelContext = container.mainContext
         let cacheRepo = EmojiCacheRepository(modelContext: modelContext)
         let apiRepo = EmojiAPIRepository()
+        let avatarRepo = AvatarRepository(context: modelContext)
         self.repository = EmojiRepository(apiRepository: apiRepo, cacheRepository: cacheRepo)
         _homeViewModel = State(initialValue: HomeViewModel(repository: repository))
+        _avatarViewModel = State(initialValue: AvatarViewModel(repository: avatarRepo))
     }
     
     
@@ -32,11 +34,17 @@ struct HomeView: View {
             VStack{
                 VStack(spacing: 10) {
                     VStack {
-                        if showAvatar, let avatar = avatarViewModel.avatar {
-                            AvatarView(avatar: avatar)
-                        }
-                        if showEmoji, let emoji = homeViewModel.emoji {
-                            EmojiView(emoji: emoji)
+                        if avatarViewModel.isLoading {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .blue))
+                                .frame(width: 100, height: 100)
+                        }else{
+                            if showAvatar, let avatar = avatarViewModel.avatar {
+                                AvatarView(avatar: avatar)
+                            }
+                            if showEmoji, let emoji = homeViewModel.emoji {
+                                EmojiView(emoji: emoji)
+                            }
                         }
                     }
                     
@@ -76,7 +84,7 @@ struct HomeView: View {
                     EmojiListView(viewModel: homeViewModel, repository: repository)
                 })
                 .navigationDestination(isPresented: $homeViewModel.goToAvatar, destination: {
-                    AvatarListView()
+                    AvatarListView(avatarViewModel: avatarViewModel)
                 })
                 .navigationDestination(isPresented: $homeViewModel.gotoRepo, destination: {
                     AppleRepoView()

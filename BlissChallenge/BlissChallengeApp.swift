@@ -10,10 +10,11 @@ import SwiftData
 
 @main
 struct BlissChallengeApp: App {
+    
     let container: ModelContainer
     
     init() {
-        let schema = Schema([Emoji.self])
+        let schema = Schema([Emoji.self, Avatar.self])
         let config = ModelConfiguration(isStoredInMemoryOnly: false)
         do {
             container = try ModelContainer(for: schema, configurations: [config])
@@ -32,3 +33,4 @@ struct BlissChallengeApp: App {
         .modelContainer(container)
     }
 }
+

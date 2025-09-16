@@ -6,7 +6,7 @@
 //
 import SwiftUI
 
-struct AvatarView: View {
+struct AvatarItemListView: View {
     var avatar: AvatarDTO
     
     var body: some View {
@@ -18,16 +18,16 @@ struct AvatarView: View {
                     .resizable()
                     .scaledToFit()
                     .clipShape(Circle())
-                    .frame(width: 150, height: 150)
+                    .frame(width: 50, height: 50)
             case .failure(_):
                 Image(systemName: "xmark")
                     .resizable()
                     .scaledToFit()
                     .foregroundColor(.red)
-                    .frame(width: 150, height: 150)
+                    .frame(width: 50, height: 50)
             default:
                 ProgressView()
-                    .frame(width: 150, height: 150)
+                    .frame(width: 40, height: 50)
             }
         }
         Text(avatar.login)
