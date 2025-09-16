@@ -31,7 +31,7 @@ final class AvatarRepository {
             try? context.save()
             print("Saved Avatar")
         } catch {
-            print("❌ Error download image: \(error)")
+            print("Error download image: \(error)")
         }
     }
     

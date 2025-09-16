@@ -20,8 +20,8 @@ struct HomeView: View {
     
     init(container: ModelContainer) {
         self.modelContext = container.mainContext
-        let cacheRepo = EmojiCacheRepository(modelContext: modelContext)
-        let apiRepo = EmojiAPIRepository()
+        let cacheRepo = EmojiLocalDataSource(modelContext: modelContext)
+        let apiRepo = EmojiRemoteDataSource()
         let avatarRepo = AvatarRepository(context: modelContext)
         self.repository = EmojiRepository(apiRepository: apiRepo, cacheRepository: cacheRepo)
         _homeViewModel = State(initialValue: HomeViewModel(repository: repository))

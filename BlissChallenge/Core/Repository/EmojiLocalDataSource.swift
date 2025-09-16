@@ -7,8 +7,8 @@
 
 import SwiftData
 import Foundation
-
-final class EmojiCacheRepository {
+@MainActor
+final class EmojiLocalDataSource {
     private let modelContext: ModelContext
 
     init(modelContext: ModelContext) {
@@ -20,13 +20,14 @@ final class EmojiCacheRepository {
         let descriptor = FetchDescriptor<Emoji>()
         return try modelContext.fetch(descriptor)
     }
-    @MainActor
+    
     func saveEmojis(_ emojis: [Emoji]) throws {
         for emoji in emojis {
             if try !exists(emoji) {
                 modelContext.insert(emoji)
             }
         }
+        print("saved on Cache")
         try modelContext.save()
     }
     

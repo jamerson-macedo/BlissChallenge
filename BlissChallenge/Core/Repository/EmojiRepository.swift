@@ -10,22 +10,22 @@ import Foundation
 import SwiftData
 
 final class EmojiRepository {
-    private let apiRepository: EmojiAPIRepository
-    private let cacheRepository: EmojiCacheRepository
+    private let remote: EmojiRemoteDataSource
+    private let local: EmojiLocalDataSource
 
-    init(apiRepository: EmojiAPIRepository, cacheRepository: EmojiCacheRepository) {
-        self.apiRepository = apiRepository
-        self.cacheRepository = cacheRepository
+    init(apiRepository: EmojiRemoteDataSource, cacheRepository: EmojiLocalDataSource) {
+        self.remote = apiRepository
+        self.local = cacheRepository
     }
     func fetchEmojis() async throws -> [Emoji] {
-        let cached = try cacheRepository.fetchEmojis()
+        let cached = try await local.fetchEmojis()
         if !cached.isEmpty {
             return cached
             
         }
 
-        let remote = try await apiRepository.fetchEmojis()
-        try await cacheRepository.saveEmojis(remote)
+        let remote = try await remote.fetchEmojis()
+        try await local.saveEmojis(remote)
         return remote
     }
 
@@ -35,18 +35,18 @@ final class EmojiRepository {
             return data
         }
 
-        guard let data = try await apiRepository.fetchImage() else {
+        guard let data = try await remote.fetchImage() else {
             return nil
         }
 
      
-        try cacheRepository.saveImageData(for: emoji, imageData: data)
+        try await local.saveImageData(for: emoji, imageData: data)
         return data
     }
     func refreshEmojis() async throws {
-        try cacheRepository.clearCache()
-        let remote = try await apiRepository.fetchEmojis()
-        try await cacheRepository.saveEmojis(remote)
+        try await local.clearCache()
+        let remote = try await remote.fetchEmojis()
+        try await local.saveEmojis(remote)
     }
 
 }
