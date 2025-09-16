@@ -132,4 +132,13 @@ struct HomeView: View {
         }
     }
 }
+#Preview("Home View") {
+    let preview = Preview(Emoji.self)
+
+    let homeView = HomeView(container: preview.container)
+
+    homeView
+        .modelContainer(preview.container)
+      
+}
 
