@@ -79,3 +79,16 @@ struct EmojiListView: View {
         }
     }
 }
+#Preview("Emoji List View") {
+
+    let preview = Preview(Emoji.self)
+    preview.addExamples(Emoji.sampleEmojis)
+    let localRepo = EmojiLocalDataSource(modelContext: preview.container.mainContext)
+    let remoteRepo = EmojiRemoteDataSource()
+    let emojiRepo = EmojiRepository(remote: remoteRepo, local: localRepo)
+    let homeVM = HomeViewModel(repository: emojiRepo)
+    homeVM.emojiList = Emoji.sampleEmojis
+    
+    return EmojiListView(viewModel: homeVM, repository: emojiRepo)
+        .modelContainer(preview.container)
+}

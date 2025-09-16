@@ -80,6 +80,16 @@ struct AvatarListView: View {
     }
 }
 
-#Preview {
+
+#Preview("Português") {
+    // Cria o preview container
+    let preview = Preview(Emoji.self)
+    preview.addExamples(Emoji.sampleEmojis)
+    let avatarRepo = AvatarRepository(context: preview.container.mainContext)
     
+    let avatarVM = AvatarViewModel(repository: avatarRepo)
+    
+    
+    return AvatarListView(avatarViewModel: avatarVM)
+        .modelContainer(preview.container)
 }
