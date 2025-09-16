@@ -15,64 +15,70 @@ struct AvatarListView: View {
     }
 
     var body: some View {
-        VStack {
-            if avatarViewModel.avatars.isEmpty {
-                ContentUnavailableView("No avatars found", systemImage: "person.circle")
-            } else {
-                List {
-                    ForEach(avatarViewModel.avatars) { avatar in
-                        HStack {
-                            if let imageData = avatar.imageData,
-                               let uiImage = UIImage(data: imageData) {
-                                Image(uiImage: uiImage)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .clipShape(Circle())
-                                    .frame(width: 80, height: 80)
-                            }
-                            
-                            VStack(alignment: .leading) {
-                                Text(avatar.login)
-                                    .font(.headline)
-                            }
-                            
-                            Spacer()
-                            
-                            Button {
-                                Task {
-                                    await avatarViewModel.deleteAvatar(avatar: avatar)
-                                    withAnimation(.easeInOut) {
-                                        avatarViewModel.avatars.removeAll { $0.id == avatar.id }
+        NavigationStack {
+            VStack {
+                if avatarViewModel.avatars.isEmpty {
+                    ContentUnavailableView("No avatars found", systemImage: "person.circle")
+                } else {
+                    ScrollView {
+                        LazyVStack(spacing: 10) {
+                            ForEach(avatarViewModel.avatars, id: \.id) { avatar in
+                                HStack {
+                                    if let imageData = avatar.imageData,
+                                       let uiImage = UIImage(data: imageData) {
+                                        Image(uiImage: uiImage)
+                                            .resizable()
+                                            .scaledToFit()
+                                            .clipShape(Circle())
+                                            .frame(width: 80, height: 80)
+                                    }
+
+                                    VStack(alignment: .leading) {
+                                        Text(avatar.login)
+                                            .font(.headline)
+                                    }
+
+                                    Spacer()
+
+                                    Button {
+                                        Task {
+                                            await avatarViewModel.deleteAvatar(avatar: avatar)
+                                            withAnimation(.easeInOut) {
+                                                avatarViewModel.avatars.removeAll { $0.id == avatar.id }
+                                            }
+                                        }
+                                    } label: {
+                                        if avatarViewModel.isLoading {
+                                            ProgressView()
+                                        } else {
+                                            Image(systemName: "trash")
+                                                .foregroundColor(.red)
+                                        }
                                     }
                                 }
-                            } label: {
-                                if avatarViewModel.isLoading {
-                                    ProgressView()
-                                } else {
-                                    Image(systemName: "trash")
-                                        .foregroundColor(.red)
-                                }
+                                .padding()
+                                .background(Color(.systemBackground))
+                                .cornerRadius(10)
+                                .shadow(radius: 1)
+                                .transition(.move(edge: .leading).combined(with: .opacity))
                             }
                         }
+                        .padding()
                     }
-                    .animation(.easeInOut, value: avatarViewModel.avatars)
                 }
-                .navigationTitle("Avatars")
-                .navigationBarTitleDisplayMode(.inline)
-                .listStyle(.plain) 
-                .alert(
-                    "Error",
-                    isPresented: Binding(
-                        get: { avatarViewModel.errormessage != nil },
-                        set: { _ in avatarViewModel.errormessage = nil }
-                    )
-                ) {
-                    Button("OK", role: .cancel) {
-                       
-                    }
-                } message: {
-                    Text(avatarViewModel.errormessage ?? "Unknown error")
-                }
+            }
+            .navigationTitle("Avatars")
+            .navigationBarTitleDisplayMode(.inline)
+            .alert(
+                "Error",
+                isPresented: Binding(
+                    get: { avatarViewModel.errormessage != nil },
+                    set: { _ in avatarViewModel.errormessage = nil }
+                )
+            ) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(avatarViewModel.errormessage ?? "Unknown error")
             }
         }
         .task {
