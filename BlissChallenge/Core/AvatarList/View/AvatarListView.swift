@@ -59,6 +59,19 @@ struct AvatarListView: View {
                 }
                 .navigationTitle("Avatars")
                 .navigationBarTitleDisplayMode(.inline)
+                .alert(
+                    "Error",
+                    isPresented: Binding(
+                        get: { avatarViewModel.errormessage != nil },
+                        set: { _ in avatarViewModel.errormessage = nil }
+                    )
+                ) {
+                    Button("OK", role: .cancel) {
+                       
+                    }
+                } message: {
+                    Text(avatarViewModel.errormessage ?? "Unknown error")
+                }
             }
         }
         .task {
