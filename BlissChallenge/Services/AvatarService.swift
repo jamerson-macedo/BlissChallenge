@@ -23,6 +23,7 @@ final class AvatarService{
             throw NetworkError.custom("Erro in Response")
         }
         if httpResponse.statusCode == 200 {
+            print("Get Avatar from API")
             return try JSONDecoder().decode(AvatarDTO.self, from: data)
         } else if httpResponse.statusCode == 404 {
             throw NetworkError.custom("User not Found !")
