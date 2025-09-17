@@ -36,6 +36,7 @@ final class AvatarViewModel {
             self.avatar = avatar
             self.avatars = [avatar]
         } else {
+            avatar = nil 
             self.errormessage = "Failed to load avatar. Avatar not Found."
         }
         self.isLoading = false

@@ -29,17 +29,9 @@ final class EmojiRepository {
     }
     
     func fetchImage(for emoji: Emoji) async throws -> Data? {
-        
-        if let data = emoji.imageData {
-            return data
-        }
-        
-        guard let data = try await remote.fetchImage() else {
-            return nil
-        }
-        
-        
-        try  local.saveImageData(for: emoji, imageData: data)
+        if let data = emoji.imageData { return data } 
+        guard let data = try await remote.fetchImage() else { return nil }
+        try local.saveImageData(for: emoji, imageData: data)
         return data
     }
     func clearCache() async throws {

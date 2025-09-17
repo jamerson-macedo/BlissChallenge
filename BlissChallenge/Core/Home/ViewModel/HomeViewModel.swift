@@ -23,6 +23,7 @@ import Observation
     }
     var emoji : Emoji?
     var emojiList : [Emoji] = []
+    
     func loadEmojis() async {
         self.isLoading = true
         do {
