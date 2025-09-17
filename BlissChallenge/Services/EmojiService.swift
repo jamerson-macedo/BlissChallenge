@@ -15,7 +15,7 @@ final class EmojiService{
     private init(){}
     
     func fetchEmojis() async throws ->[Emoji]{
-        guard let url = APIEndpoint.emojis.url else { throw NetworkError.badURL}
+        guard let url = GitHubApiEndPoints.emojis.url else { throw NetworkError.badURL}
         do{
             let (data, _) = try await URLSession.shared.data(from: url)
             guard let apiResponse = try? JSONDecoder().decode(ApiResponse.self, from: data) else {
@@ -31,7 +31,7 @@ final class EmojiService{
         }
     }
     func fetchImage() async throws -> Data? {
-        guard let url = APIEndpoint.emojis.url else { throw NetworkError.badURL}
+        guard let url = GitHubApiEndPoints.emojis.url else { throw NetworkError.badURL}
         
         let (data, _) = try await URLSession.shared.data(from: url)
         return data

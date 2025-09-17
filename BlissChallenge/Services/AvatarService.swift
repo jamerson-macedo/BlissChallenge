@@ -13,7 +13,7 @@ final class AvatarService{
     private init(){}
     
     func fetchAvatar(query: String) async throws -> AvatarDTO {
-        guard let url = APIEndpoint.avatar(query).url else {
+        guard let url = GitHubApiEndPoints.avatar(query).url else {
             throw NetworkError.badURL
         }
         

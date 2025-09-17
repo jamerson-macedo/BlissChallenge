@@ -21,7 +21,6 @@ import Observation
     init(repository: EmojiRepository) {
         self.repository = repository
     }
-    
     var emoji : Emoji?
     var emojiList : [Emoji] = []
     func loadEmojis() async {
@@ -47,7 +46,7 @@ import Observation
         self.isLoading = true
         do {
             
-            try await repository.refreshEmojis()
+            try await repository.clearCache()
             await loadEmojis()
         } catch {
             self.errorMessage = "Error refreshing emojis"

@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum APIEndpoint {
+enum GitHubApiEndPoints {
     static let baseURL = "https://api.github.com"
     
     case emojis

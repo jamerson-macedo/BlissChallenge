@@ -88,16 +88,9 @@ struct AvatarListView: View {
 }
 
 #Preview("Avatar ListView") {
-    // 1. Cria o container de preview
     let preview = Preview(Avatar.self)
-    
-    // 2. Adiciona exemplos de avatar no container
     preview.addExamples(Avatar.sampleAvatars)
-    
-    // 3. Cria o repositório de preview
     let avatarRepo = AvatarRepository(context: preview.container.mainContext)
-    
-    // 4. Cria o ViewModel populado com dados fake
     let avatarVM = AvatarViewModel(repository: avatarRepo)
     avatarVM.avatars = Avatar.sampleAvatars
 return AvatarListView(avatarViewModel: avatarVM)

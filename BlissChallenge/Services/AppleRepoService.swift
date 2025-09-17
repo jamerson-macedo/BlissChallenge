@@ -13,7 +13,7 @@ final class AppleRepoService{
     private init(){}
     
     func fetchRepos(page: Int, perPage: Int = 10) async throws -> [AppleRepo] {
-        guard let url = APIEndpoint.repos(username: "apple", page: page, perPage: perPage).url else {
+        guard let url = GitHubApiEndPoints.repos(username: "apple", page: page, perPage: perPage).url else {
             throw NetworkError.badURL
             
         }

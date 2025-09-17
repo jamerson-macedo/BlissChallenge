@@ -43,10 +43,8 @@ final class EmojiRepository {
         try  local.saveImageData(for: emoji, imageData: data)
         return data
     }
-    func refreshEmojis() async throws {
+    func clearCache() async throws {
         try  local.clearCache()
-        let remote = try await remote.fetchEmojis()
-        try  local.saveEmojis(remote)
     }
     
 }
