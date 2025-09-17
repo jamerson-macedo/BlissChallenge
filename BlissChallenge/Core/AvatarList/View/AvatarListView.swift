@@ -23,47 +23,14 @@ struct AvatarListView: View {
                     ScrollView {
                         LazyVStack(spacing: 10) {
                             ForEach(avatarViewModel.avatars, id: \.id) { avatar in
-                                HStack {
-                                    if let imageData = avatar.imageData,
-                                       let uiImage = UIImage(data: imageData) {
-                                        Image(uiImage: uiImage)
-                                            .resizable()
-                                            .scaledToFit()
-                                            .clipShape(Circle())
-                                            .frame(width: 80, height: 80)
-                                    }
-
-                                    VStack(alignment: .leading) {
-                                        Text(avatar.login)
-                                            .font(.headline)
-                                    }
-
-                                    Spacer()
-
-                                    Button {
-                                        Task {
-                                            await avatarViewModel.deleteAvatar(avatar: avatar)
-                                            withAnimation(.easeInOut) {
-                                                avatarViewModel.avatars.removeAll { $0.id == avatar.id }
-                                            }
-                                        }
-                                    } label: {
-                                        if avatarViewModel.isLoading {
-                                            ProgressView()
-                                        } else {
-                                            Image(systemName: "trash")
-                                                .foregroundColor(.red)
-                                        }
-                                    }
-                                }
-                                .padding()
-                                .background(Color(.systemBackground))
-                                .cornerRadius(10)
-                                .shadow(radius: 1)
-                                .transition(.move(edge: .leading).combined(with: .opacity))
+                                AvatarRowView(avatar: avatar, avatarViewModel: avatarViewModel)
+                                    .transition(.move(edge: .leading).combined(with: .opacity))
+                                    .animation(.easeInOut, value: avatarViewModel.avatars)
+                                
                             }
-                        }
-                        .padding()
+                        }.padding()
+                    }.refreshable {
+                        await avatarViewModel.deleteAllAvatars()
                     }
                 }
             }
@@ -80,9 +47,9 @@ struct AvatarListView: View {
             } message: {
                 Text(avatarViewModel.errormessage ?? "Unknown error")
             }
-        }
-        .task {
-            await avatarViewModel.loadAvatars()
+            .task {
+                await avatarViewModel.loadAvatars()
+            }
         }
     }
 }

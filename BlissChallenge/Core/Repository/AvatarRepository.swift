@@ -44,4 +44,14 @@ final class AvatarRepository {
         context.delete(avatar)
         try? context.save()
     }
+    func deleteAllAvatars() {
+           let descriptor = FetchDescriptor<Avatar>()
+           if let avatars = try? context.fetch(descriptor) {
+               for avatar in avatars {
+                   context.delete(avatar)
+               }
+               try? context.save()
+           }
+       }
+    
 }

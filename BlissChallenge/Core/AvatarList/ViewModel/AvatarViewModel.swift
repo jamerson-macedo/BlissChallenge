@@ -52,5 +52,11 @@ final class AvatarViewModel {
         await loadAvatars()
         self.isLoading = false
     }
+    func deleteAllAvatars() async {
+          isLoading = true
+          repository.deleteAllAvatars()
+          await loadAvatars()
+          isLoading = false
+      }
 }
 
