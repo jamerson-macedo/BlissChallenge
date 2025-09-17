@@ -9,7 +9,7 @@ import SwiftUI
 struct AvatarRowView: View {
     let avatar: Avatar
     @Bindable var avatarViewModel: AvatarViewModel
-
+    
     var body: some View {
         HStack {
             if let imageData = avatar.imageData,
@@ -20,14 +20,14 @@ struct AvatarRowView: View {
                     .clipShape(Circle())
                     .frame(width: 80, height: 80)
             }
-
+            
             VStack(alignment: .leading) {
                 Text(avatar.login)
                     .font(.headline)
             }
-
+            
             Spacer()
-
+            
             Button {
                 Task {
                     await avatarViewModel.deleteAvatar(avatar: avatar)

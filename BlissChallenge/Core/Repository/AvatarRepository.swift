@@ -1,57 +1,51 @@
 //
-//  AvatarRepository.swift
+//  AvatarRepository 2.swift
 //  BlissChallenge
 //
 //  Created by Jamerson Macedo on 16/09/25.
 //
 
-
-import SwiftData
 import Foundation
-@MainActor
+import SwiftData
+
 final class AvatarRepository {
-    private let context: ModelContext
+    private let local: AvatarLocalDataSource
+    private let remote: AvatarRemoteDataSource
     
-    init(context: ModelContext) {
-        self.context = context
+    init(local: AvatarLocalDataSource, remote: AvatarRemoteDataSource) {
+        self.local = local
+        self.remote = remote
     }
     
-    func saveAvatar(from dto: AvatarDTO) async {
-        guard let url = URL(string: dto.avatarURL) else { return }
+    func getAvatar(login: String) async -> Avatar? {
+        if let cached = local.fetchAvatar(login: login) {
+            return cached
+        }
         
         do {
-            let (data, _) = try await URLSession.shared.data(from: url)
-            
-            let avatar = Avatar(
-                login: dto.login, avatarURL: dto.avatarURL,
-                imageData: data
-            )
-            
-            context.insert(avatar)
-            try? context.save()
-            print("Saved Avatar")
+            let dto = try await remote.fetchAvatar(query: login)
+            let data = try await remote.downloadImage(from: dto.avatarURL)
+            let avatar = Avatar(login: dto.login, avatarURL: dto.avatarURL, imageData: data)
+            local.saveAvatar(avatar)
+            return avatar
         } catch {
-            print("Error download image: \(error)")
+            print("Error fetching avatar: \(error)")
+            return nil
         }
     }
     
-    func fetchAllAvatars() -> [Avatar] {
-        let descriptor = FetchDescriptor<Avatar>()
-        return (try? context.fetch(descriptor)) ?? []
+    func getAllAvatars() -> [Avatar] {
+        local.fetchAllAvatars()
     }
     
     func deleteAvatar(_ avatar: Avatar) {
-        context.delete(avatar)
-        try? context.save()
+        local.deleteAvatar(avatar)
     }
-    func deleteAllAvatars() {
-           let descriptor = FetchDescriptor<Avatar>()
-           if let avatars = try? context.fetch(descriptor) {
-               for avatar in avatars {
-                   context.delete(avatar)
-               }
-               try? context.save()
-           }
-       }
     
+    func deleteAllAvatars() {
+        local.deleteAllAvatars()
+    }
+    func saveAvatar(_ avatar: Avatar) {
+        local.saveAvatar(avatar)
+    }
 }

@@ -16,16 +16,21 @@ struct HomeView: View {
     @State private var showEmoji = true
     
     let modelContext: ModelContext
-    let repository: EmojiRepository
+    let emojiRepository: EmojiRepository
+    let avatarRepository : AvatarRepository
     
     init(container: ModelContainer) {
         self.modelContext = container.mainContext
-        let cacheRepo = EmojiLocalDataSource(modelContext: modelContext)
-        let apiRepo = EmojiRemoteDataSource()
-        let avatarRepo = AvatarRepository(context: modelContext)
-        self.repository = EmojiRepository(remote: apiRepo, local: cacheRepo)
-        _homeViewModel = State(initialValue: HomeViewModel(repository: repository))
-        _avatarViewModel = State(initialValue: AvatarViewModel(repository: avatarRepo))
+
+        let emojiLocal = EmojiLocalDataSource(modelContext: modelContext)
+        let emojiRemote = EmojiRemoteDataSource()
+        self.emojiRepository = EmojiRepository(remote: emojiRemote, local: emojiLocal)
+
+        let avatarLocal = AvatarLocalDataSource(context: modelContext)
+        let avatarRemote = AvatarRemoteDataSource()
+        self.avatarRepository = AvatarRepository(local: avatarLocal, remote: avatarRemote)
+        _homeViewModel = State(initialValue: HomeViewModel(repository: self.emojiRepository))
+        _avatarViewModel = State(initialValue: AvatarViewModel(repository: self.avatarRepository))
     }
     
     
@@ -81,7 +86,7 @@ struct HomeView: View {
                 }
             } .navigationTitle("Emoji")
                 .navigationDestination(isPresented: $homeViewModel.goToList, destination: {
-                    EmojiListView(viewModel: homeViewModel, repository: repository)
+                    EmojiListView(viewModel: homeViewModel)
                 })
                 .navigationDestination(isPresented: $homeViewModel.goToAvatar, destination: {
                     AvatarListView(avatarViewModel: avatarViewModel)

@@ -12,7 +12,7 @@ struct CustomButtonView: View {
     var isLoading : Bool = false
     var text: String
     var action : () -> Void
-  
+    
     var body: some View {
         VStack{
             Button(action: {
@@ -33,8 +33,8 @@ struct CustomButtonView: View {
                                 .padding(.trailing, 30)
                         }
                     }
-                    
-                    
+                
+                
             })
         }
     }

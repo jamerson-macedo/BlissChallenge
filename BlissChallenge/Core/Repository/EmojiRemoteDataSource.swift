@@ -11,7 +11,7 @@ final class EmojiRemoteDataSource {
     func fetchEmojis() async throws -> [Emoji] {
         return try await EmojiService.shared.fetchEmojis()
     }
-
+    
     func fetchImage() async throws -> Data? {
         
         return try await EmojiService.shared.fetchImage()

@@ -10,7 +10,7 @@ import Foundation
 import SwiftData
 
 @Model
-class Avatar: Identifiable, Equatable {
+class Avatar: Identifiable, Equatable, @unchecked Sendable {
     var login: String
     var avatarURL: String
     @Attribute(.externalStorage)

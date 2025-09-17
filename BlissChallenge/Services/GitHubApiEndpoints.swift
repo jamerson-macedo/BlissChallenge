@@ -5,7 +5,6 @@
 //  Created by Jamerson Macedo on 14/09/25.
 //
 
-
 import Foundation
 
 enum GitHubApiEndPoints {

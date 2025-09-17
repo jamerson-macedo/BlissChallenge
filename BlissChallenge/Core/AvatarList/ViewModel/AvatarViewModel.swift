@@ -13,9 +13,10 @@ import Observation
 final class AvatarViewModel {
     var search = ""
     var errormessage: String? = nil
-    var avatar: AvatarDTO?
+    var avatar: Avatar?
     var isLoading: Bool = false
-    var avatars : [Avatar] = []
+    var avatars: [Avatar] = []
+    
     let repository: AvatarRepository
     
     init(repository: AvatarRepository) {
@@ -23,40 +24,38 @@ final class AvatarViewModel {
     }
     
     func fetchAvatar() async {
-        self.isLoading = true
         let query = search
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .lowercased()
         
-        do {
-            avatar = try await AvatarService.shared.fetchAvatar(query: query)
-            
-            if let avatar {
-                await repository.saveAvatar(from: avatar)
-            }
-            
-        } catch {
+        guard !query.isEmpty else { return }
+        
+        isLoading = true
+        
+        if let avatar = await repository.getAvatar(login: query) {
+            self.avatar = avatar
+            self.avatars = [avatar]
+        } else {
             self.errormessage = "Failed to load avatar. Avatar not Found."
         }
-        
-        search = ""
         self.isLoading = false
+        search = ""
     }
     
     func loadAvatars() async {
-        avatars =  repository.fetchAllAvatars()
+        avatars = repository.getAllAvatars()
     }
-    func deleteAvatar(avatar : Avatar) async {
-        self.isLoading = true
+    
+    func deleteAvatar(avatar: Avatar) async {
+        isLoading = true
         repository.deleteAvatar(avatar)
         await loadAvatars()
-        self.isLoading = false
+        isLoading = false
     }
     func deleteAllAvatars() async {
-          isLoading = true
-          repository.deleteAllAvatars()
-          await loadAvatars()
-          isLoading = false
-      }
+        isLoading = true
+        repository.deleteAllAvatars()
+        await loadAvatars()
+        isLoading = false
+    }
 }
-

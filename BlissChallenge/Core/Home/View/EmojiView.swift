@@ -4,6 +4,7 @@
 //
 //  Created by Jamerson Macedo on 15/09/25.
 //
+
 import SwiftUI
 
 struct EmojiView: View {

@@ -10,7 +10,7 @@ import Foundation
 
 final class EmojiLocalDataSource {
     private let modelContext: ModelContext
-
+    
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
     }
@@ -37,7 +37,7 @@ final class EmojiLocalDataSource {
         let results = try modelContext.fetch(descriptor)
         return !results.isEmpty
     }
-
+    
     func saveImageData(for emoji: Emoji, imageData: Data) throws {
         let id = emoji.id
         let descriptor = FetchDescriptor<Emoji>(predicate: #Predicate { $0.id == id })
@@ -51,17 +51,12 @@ final class EmojiLocalDataSource {
         try modelContext.save()
     }
     func clearCache() throws {
-         let descriptor = FetchDescriptor<Emoji>()
-         let emojis = try modelContext.fetch(descriptor)
-         emojis.forEach { emoji in
-             modelContext.delete(emoji)
-         }
-         try modelContext.save()
-         print("Cache cleared")
-     }
+        let descriptor = FetchDescriptor<Emoji>()
+        let emojis = try modelContext.fetch(descriptor)
+        emojis.forEach { emoji in
+            modelContext.delete(emoji)
+        }
+        try modelContext.save()
+        print("Cache cleared")
+    }
 }
-
-
-
-
-

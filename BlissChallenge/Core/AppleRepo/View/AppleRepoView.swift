@@ -11,47 +11,47 @@ struct AppleRepoView: View {
     @State var viewmodel: AppleRepoViewModel = .init()
     
     var body: some View {
-            List {
-                ForEach(viewmodel.repo) { repo in
-                    VStack(alignment: .leading) {
-                        Text(repo.fullName)
-                            .font(.headline)
-                    }
-                    .task {
-                        if repo.id == viewmodel.repo.last?.id {
-                            await viewmodel.fetchAppleRepo()
-                        }
-                    }
+        List {
+            ForEach(viewmodel.repo) { repo in
+                VStack(alignment: .leading) {
+                    Text(repo.fullName)
+                        .font(.headline)
                 }
-                
-                if viewmodel.isLoading {
-                    HStack {
-                        Spacer()
-                        ProgressView("Loading...")
-                        Spacer()
+                .task {
+                    if repo.id == viewmodel.repo.last?.id {
+                        await viewmodel.fetchAppleRepo()
                     }
                 }
-            }
-            .listStyle(.plain) 
-            .alert(
-                "Error",
-                isPresented: Binding(
-                    get: { viewmodel.errormessage != nil },
-                    set: { _ in viewmodel.errormessage = nil }
-                )
-            ) {
-                Button("OK", role: .cancel) {
-                    
-                }
-            } message: {
-                Text(viewmodel.errormessage ?? "Unknown error")
-            }
-            .navigationTitle("Apple Repo")
-            .navigationBarTitleDisplayMode(.inline)
-            .task {
-                await viewmodel.fetchAppleRepo()
             }
             
+            if viewmodel.isLoading {
+                HStack {
+                    Spacer()
+                    ProgressView("Loading...")
+                    Spacer()
+                }
+            }
+        }
+        .listStyle(.plain)
+        .alert(
+            "Error",
+            isPresented: Binding(
+                get: { viewmodel.errormessage != nil },
+                set: { _ in viewmodel.errormessage = nil }
+            )
+        ) {
+            Button("OK", role: .cancel) {
+                
+            }
+        } message: {
+            Text(viewmodel.errormessage ?? "Unknown error")
+        }
+        .navigationTitle("Apple Repo")
+        .navigationBarTitleDisplayMode(.inline)
+        .task {
+            await viewmodel.fetchAppleRepo()
+        }
+        
     }
 }
 

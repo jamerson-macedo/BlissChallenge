@@ -9,11 +9,11 @@ import SwiftUI
 
 struct AvatarListView: View {
     @Bindable var avatarViewModel: AvatarViewModel
-
+    
     init(avatarViewModel: AvatarViewModel) {
         self._avatarViewModel = Bindable(avatarViewModel)
     }
-
+    
     var body: some View {
         NavigationStack {
             VStack {
@@ -57,9 +57,14 @@ struct AvatarListView: View {
 #Preview("Avatar ListView") {
     let preview = Preview(Avatar.self)
     preview.addExamples(Avatar.sampleAvatars)
-    let avatarRepo = AvatarRepository(context: preview.container.mainContext)
+    
+    let local = AvatarLocalDataSource(context: preview.container.mainContext)
+    let remote = AvatarRemoteDataSource()
+    let avatarRepo = AvatarRepository(local: local, remote: remote)
+    
     let avatarVM = AvatarViewModel(repository: avatarRepo)
     avatarVM.avatars = Avatar.sampleAvatars
-return AvatarListView(avatarViewModel: avatarVM)
+    
+    return AvatarListView(avatarViewModel: avatarVM)
         .modelContainer(preview.container)
 }

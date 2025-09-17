@@ -5,7 +5,6 @@
 //  Created by Jamerson Macedo on 15/09/25.
 //
 
-
 import Foundation
 
 struct AppleRepoDTO:Identifiable,Decodable {

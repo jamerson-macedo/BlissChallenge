@@ -9,9 +9,7 @@ import SwiftUI
 import SwiftData
 struct EmojiListView: View {
     @Bindable var viewModel: HomeViewModel
-    let repository: EmojiRepository
-    init(viewModel: HomeViewModel, repository: EmojiRepository) {
-        self.repository = repository
+    init(viewModel: HomeViewModel) {
         self._viewModel = Bindable(viewModel)
     }
     
@@ -80,7 +78,7 @@ struct EmojiListView: View {
     }
 }
 #Preview("Emoji List View") {
-
+    
     let preview = Preview(Emoji.self)
     preview.addExamples(Emoji.sampleEmojis)
     let localRepo = EmojiLocalDataSource(modelContext: preview.container.mainContext)
@@ -89,6 +87,6 @@ struct EmojiListView: View {
     let homeVM = HomeViewModel(repository: emojiRepo)
     homeVM.emojiList = Emoji.sampleEmojis
     
-    return EmojiListView(viewModel: homeVM, repository: emojiRepo)
+    return EmojiListView(viewModel: homeVM)
         .modelContainer(preview.container)
 }

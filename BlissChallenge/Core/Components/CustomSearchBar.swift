@@ -46,7 +46,7 @@ struct SearchBar: View {
                     .animation(.spring(), value: text)
                 }
         }
-       
+        
     }
 }
 
